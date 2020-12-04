@@ -5,20 +5,6 @@ const getCoordsForAddress = require('../util/location');
 const HttpError = require('../models/http-error');
 const Place = require('../models/place');
 
-let DUMMY_PLACES = [
-	{
-		id: 'p1',
-		title: 'Empire State Building',
-		description: 'Tall building',
-		location: {
-			lat: 40.7484474,
-			lng: -73.9871516,
-		},
-		address: '20 W 34th St, New York, NY 10001',
-		creator: 'u1',
-	},
-];
-
 const getPlaceById = async (req, res, next) => {
 	const placeId = req.params.pid; // { pid: 'p1'}
 	let place;
@@ -26,7 +12,7 @@ const getPlaceById = async (req, res, next) => {
 		place = await Place.findById(placeId);
 	} catch (err) {
 		return next(
-			new HttpError('#E1F: Something went wrong, could not find a place.', 500)
+			new HttpError('Something went wrong, could not find a place. Code: #P1F', 500)
 		);
 	}
 
@@ -50,7 +36,7 @@ const getPlacesByUserId = async (req, res, next) => {
 	} catch (err) {
 		return next(
 			new HttpError(
-				'#E2F: Something went wrong, could not find any places.',
+				'Something went wrong, could not find any places. Code: #P2F',
 				500
 			)
 		);
@@ -107,7 +93,7 @@ const updatePlace = async (req, res, next) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
 		console.log(errors);
-		throw new HttpError('Invalid inputs passed, please check your data.', 422);
+		next(new HttpError('Invalid inputs passed, please check your data.', 422));
 	}
 
 	const { title, description } = req.body;
@@ -118,7 +104,7 @@ const updatePlace = async (req, res, next) => {
 		place = await Place.findById(placeId);
 	} catch (err) {
 		return next(
-			new HttpError('#E3F: Something went wrong, could not update place', 500)
+			new HttpError('Something went wrong, could not update place. Code: #P3F', 500)
 		);
 	}
 
@@ -129,7 +115,7 @@ const updatePlace = async (req, res, next) => {
 		await place.save();
 	} catch (err) {
 		return next(
-			new HttpError('#E3S: Something went wrong, could not save place', 500)
+			new HttpError('Something went wrong, could not save place. Code: #P3S:', 500)
 		);
 	}
 
@@ -142,7 +128,7 @@ const deletePlace = async (req, res, next) => {
 		place = await Place.findById(placeId);
 	} catch (err) {
 		return next(
-			new HttpError('#E4F: Something went wrong, could not find place', 500)
+			new HttpError('Something went wrong, could not find place. Code: #P4F:', 500)
 		);
 	}
 
@@ -150,7 +136,7 @@ const deletePlace = async (req, res, next) => {
 		await place.remove();
 	} catch (err) {
 		return next(
-			new HttpError('#E4D: Something went wrong, could not delete place', 500)
+			new HttpError('Something went wrong, could not delete place. Code: #P4D:', 500)
 		);
 	}
 
